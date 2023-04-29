@@ -37,6 +37,25 @@ $ make frontend-start
 
 ```
 
+5. Pronto! Agora você pode acessar o sistema em **http://localhost:8501**
+
+6. Caso deseje parar a execução, execute os seguintes comandos:
+
+``` bash
+make backend-stop
+```
+
+7. Para parar o frontend:
+
+``` bash
+make frontend-stop
+```
+
+8. Para parar ambos:
+
+``` bash
+make stop
+```
 
 ## Autores 
 

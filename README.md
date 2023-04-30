@@ -1,6 +1,7 @@
 # Sales Prophet
 
 
+
 ## Descrição do Projeto
 
 Sales Prophet é um projeto para controle e previsão de vendas. Ele possui recursos para cadastro de vendas, consultas, atualização e exclusão. Além disso, conta com um sistema de previsão de vendas que utiliza as bibliotecas do Facebook.

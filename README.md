@@ -1,6 +1,6 @@
 # Sales Prophet
 
-![](src/SalesProphet.png)
+![](src/SalesProphetV1.png)
 
 ## Descrição do Projeto
 

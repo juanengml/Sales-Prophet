@@ -1,12 +1,16 @@
-import streamlit as st
 import requests
-import pandas as pd
-from datetime import datetime 
-import plotly.express as px
-from lmodel.model import plot_grafico_vendas
-from lmodel.model import cadastro_vendas, visualiza_vendas, forecast_registros
-from lmodel.model import update_vendas, deleta_vendas, quantidade_registros
 import numpy as np
+import pandas as pd
+import streamlit as st
+import plotly.express as px
+from datetime import datetime
+from lmodel.model import update_vendas
+from lmodel.model import deleta_vendas
+from lmodel.model import cadastro_vendas
+from lmodel.model import visualiza_vendas
+from lmodel.report import plot_grafico_vendas
+from lmodel.report import quantidade_registros
+from lmodel.report import forecast_registros
 
 
 #API_URL = "http://sales-prophet-backend:5000/vendas"
@@ -32,16 +36,20 @@ def main():
     
     with dados_A:
         st.subheader("Total de Vendas")
-        st.info('6')
-
+        st.info(' ')
+        st.metric(label="Total", value="6", delta="+1 CARNE")
     
     with dados_B:
         st.subheader("Maior Venda")
-        st.success('500')
+        st.success(' ')
+        st.metric(label="Alta", value="500", delta="+1 ABC")
+
 
     with dados_C:
         st.subheader("Menor Venda")
-        st.warning('250')
+        st.warning(' ')
+        st.metric(label="Baixa", value="250", delta="-1 ARROZ")
+
 
 
     st.divider()  # 👈 Draws a horizontal rule
@@ -57,14 +65,11 @@ def main():
             deleta_vendas()
 
     with crud:
-        graficos_menu = st.selectbox('Relatorio', ["historico","previsão"])
-        if graficos_menu == "historico":
-            chart_data = pd.DataFrame(
-            np.random.randn(20, 3),
-            columns=["a", "b", "c"])
+        graficos_menu = st.selectbox('Relatorio', ["Histórico","Previsão"])
+        if graficos_menu == "Histórico":
+            plot_grafico_vendas()
 
-            st.bar_chart(chart_data)
-        if graficos_menu == "previsão":
+        if graficos_menu == "Previsão":
             forecast_registros()
 
             

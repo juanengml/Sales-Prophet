@@ -5,9 +5,9 @@ import plotly.express as px
 from datetime import datetime 
 from lmodel.service import cadastro_post, visualizar_get, detelar_request, update_put
 import numpy as np
-#API_URL = "http://sales-prophet-backend:5000/vendas"
 
-API_URL = "http://localhost:5000/vendas"
+
+API_URL = "http://sales-prophet-backend:5000/vendas"
 
 def cadastro_vendas():
     
@@ -32,7 +32,7 @@ def visualiza_vendas():
     # Tabela para visualizar as vendas cadastradas
     result = visualizar_get()
     if isinstance(result, pd.DataFrame):
-        st.table(result)
+        st.table(result.tail(20))
     else:
         st.error(result)
 

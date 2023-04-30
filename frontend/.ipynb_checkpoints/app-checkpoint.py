@@ -11,10 +11,11 @@ from lmodel.model import visualiza_vendas
 from lmodel.report import plot_grafico_vendas
 from lmodel.report import quantidade_registros
 from lmodel.report import forecast_registros
+from lmodel.report import kpi_painel
 
+API_URL = "http://sales-prophet-backend:5000/vendas"
+#API_URL = "http://localhost:5000/vendas"
 
-#API_URL = "http://sales-prophet-backend:5000/vendas"
-API_URL = "http://localhost:5000/vendas"
 st.set_page_config(
     page_title = 'Sales Prohphet',
     page_icon = '🛍️',
@@ -33,22 +34,23 @@ def main():
     st.divider()  # 👈 Draws a horizontal rule
     dados_A, dados_B, dados_C = st.columns(3)
     total, crud = st.columns(2)    
+    kpi = kpi_painel()
     
     with dados_A:
         st.subheader("Total de Vendas")
         st.info(' ')
-        st.metric(label="Total", value="6", delta="+1 CARNE")
+        st.metric(label="Total", value=kpi['total_vendas']['value'], delta=kpi['total_vendas']['delta'])
     
     with dados_B:
         st.subheader("Maior Venda")
         st.success(' ')
-        st.metric(label="Alta", value="500", delta="+1 ABC")
+        st.metric(label="Alta", value=kpi['maior_venda']['value'], delta=kpi['maior_venda']['delta'])
 
 
     with dados_C:
         st.subheader("Menor Venda")
         st.warning(' ')
-        st.metric(label="Baixa", value="250", delta="-1 ARROZ")
+        st.metric(label="Baixa", value=kpi['menor_venda']['value'], delta=kpi['menor_venda']['delta'])
 
 
 

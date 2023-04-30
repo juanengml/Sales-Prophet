@@ -1,9 +1,11 @@
 import requests 
 import pandas as pd
-#API_URL = "http://sales-prophet-backend:5000/vendas"
+from dateutil.relativedelta import relativedelta
+from datetime import datetime 
 
-API_URL = "http://localhost:5000/vendas"
+API_URL = "http://sales-prophet-backend:5000/vendas"
 
+API_FORECAST = 'http://sales-prophet-backend:5000/forecast'
 
 def cadastro_post(data_formatada, venda_total, dados_mercado, localidade):
     data_dict = {
@@ -55,4 +57,20 @@ def update_put(id, data, venda_total, dados_mercado, localidade):
         ]
     response = requests.put(API_URL, json=data_dict)
     return response
-        
+
+def forecast_consulta():    
+    df = consulta_registros()
+    data_inicial = df.max().date
+    data_inicial = datetime.strptime(data_inicial, "%Y-%m-%d").date()
+    data_final = data_inicial + relativedelta(months=3)
+    data_final = data_final.strftime('%Y-%m-%d')
+    data_inicial = data_inicial.strftime('%Y-%m-%d')
+
+    data = {'data_inicial': data_inicial, 'data_final': data_final}
+    # Faça a requisição POST com o objeto JSON no corpo da requisição
+    response = requests.post(API_FORECAST, json=data)
+    previsao = response.json()
+    df_previsao = pd.DataFrame.from_dict(previsao['previsao'])
+    media = df_previsao['venda_total'][df_previsao.venda_total > 0].mean()
+    df_previsao.loc[df_previsao.venda_total < 0, 'venda_total'] = media
+    return df_previsao

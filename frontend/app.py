@@ -3,127 +3,74 @@ import requests
 import pandas as pd
 from datetime import datetime 
 import plotly.express as px
+from lmodel.model import plot_grafico_vendas
+from lmodel.model import cadastro_vendas, visualiza_vendas, forecast_registros
+from lmodel.model import update_vendas, deleta_vendas, quantidade_registros
+import numpy as np
 
-API_URL = "http://sales-prophet-backend:5000/vendas"
 
+#API_URL = "http://sales-prophet-backend:5000/vendas"
+API_URL = "http://localhost:5000/vendas"
+st.set_page_config(
+    page_title = 'Sales Prohphet',
+    page_icon = '🛍️',
+    layout = 'wide'
+)
 
-def cadastro_vendas():
-    
-    # Formulário para cadastrar vendas
-    data = st.date_input("Selecione uma data")
-    data_formatada = datetime.strftime(data, "%Y-%m-%d")
-
-    venda_total = st.number_input("Valor Total")
-    dados_mercado = st.text_input("Dados de Mercado")
-    localidade = st.selectbox("Localidade", ["SP", "PR", "MG"])
-    
-    if st.button("Cadastrar"):
-        data_dict = {
-            "data": [
-                {
-                    "date": data_formatada,
-                    "venda_total": venda_total,
-                    "dados_mercado": dados_mercado,
-                    "localidade": localidade
-                }
-            ]
-        }
-        response = requests.post(API_URL, json=data_dict)
-        if response.status_code == 200:
-            st.success("Vendas cadastradas com sucesso!")
-        else:
-            st.error("Erro ao cadastrar vendas.")
-            st.error(response.text)
-
-def plot_grafico_vendas(limite):
-    response = requests.get(API_URL).json()
-    df = pd.DataFrame(response["vendas"])
-    fig = px.line(df.head(int(limite)), x='date', y='venda_total', title='Vendas Totais')
-    img = fig.to_image(format="png")
-    st.image(img, use_column_width=True)
-
-    #st.plotly_chart(fig)
-
-def quantidade_registros():
-    response = requests.get(API_URL).json()
-    df = pd.DataFrame(response["vendas"])
-    return len(df)
-
-def visualiza_vendas():
-    # Tabela para visualizar as vendas cadastradas
-    response = requests.get(API_URL)
-    if response.status_code == 200:
-        vendas = response.json()["vendas"]
-        if len(vendas) > 0:
-            df = pd.DataFrame(vendas)
-            st.table(df.head(10))
-        else:
-            st.info("Nenhuma venda cadastrada.")
-    else:
-        st.error("Erro ao buscar vendas cadastradas.")
-        st.error(response.text)
-
-def deleta_vendas():
-    # Formulário para deletar vendas
-    venda_ids = st.text_input("IDs das vendas (separados por vírgula)")
-    if st.button("Deletar"):
-        venda_ids = venda_ids.split(",")
-        data_dict = [{"id": int(id.strip())} for id in venda_ids]
-        response = requests.delete(API_URL, json=data_dict)
-        if response.status_code == 200:
-            st.success("Vendas deletadas com sucesso!")
-        else:
-            st.error("Erro ao deletar vendas.")
-            st.error(response.text)
-    
-def update_vendas():
-    # Formulário para atualizar vendas
-    st.write("Digite os novos valores para as vendas. O ID é obrigatório.")
-    id = st.text_input("ID")
-    data = st.text_input("Data (YYYY-MM-DD)")
-    venda_total = st.number_input("Valor Total")
-    dados_mercado = st.text_input("Dados de Mercado")
-    localidade = st.selectbox("Localidade", ["SP", "PR", "MG"])
-    if st.button("Atualizar"):
-        data_dict = [
-            {
-                "id": id,
-                "date": data,
-                "venda_total": venda_total,
-                "dados_mercado": dados_mercado,
-                "localidade": localidade
-            }
-        ]
-        response = requests.put(API_URL, json=data_dict)
-        if response.status_code == 200:
-            st.success("Vendas atualizadas com sucesso!")
-        else:
-            st.error("Erro ao atualizar vendas.")
-            st.error(response.text)
     
 def main():
-    st.title("Sales Prophet")
-    st.expander('Test', expanded=False)
-    st.header("Gerenciamento e previsão de vendas: tornando seu negócio mais eficiente e lucrativo.")
+    #st.title("Sales Prophet")
+    st.markdown("<h1 style='text-align: center; color: white;'>💳  &nbsp Sales Prophet  &nbsp 🛍️</h1>", unsafe_allow_html=True)
+
+    st.divider()  # 👈 Draws a horizontal rule
+    st.markdown("<h2 style='text-align: center; color: white;'> Gerenciamento e previsão de vendas </h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: white;'> Tornando seu negócio mais eficiente e lucrativo. </h3>", unsafe_allow_html=True)
+
+    st.divider()  # 👈 Draws a horizontal rule
+    dados_A, dados_B, dados_C = st.columns(3)
+    total, crud = st.columns(2)    
     
-    total, crud = st.columns(2)
+    with dados_A:
+        st.subheader("Total de Vendas")
+        st.info('6')
+
+    
+    with dados_B:
+        st.subheader("Maior Venda")
+        st.success('500')
+
+    with dados_C:
+        st.subheader("Menor Venda")
+        st.warning('250')
+
+
+    st.divider()  # 👈 Draws a horizontal rule
+
     with total:
-        st.header("Vendas", anchor=False)
-        st.warning(f"Total de Vendas **{quantidade_registros()}**")
-        limite = st.number_input("limite")
-        plot_grafico_vendas(limite)
         
-        
-    with crud:
-        crud = st.selectbox('Menu', ['Cadastrar', 'Atualizar','Deletar'])
-        if crud == 'Cadastrar':
+        crud_menu = st.selectbox('Menu', ['Cadastrar', 'Atualizar','Deletar'])
+        if crud_menu == 'Cadastrar':
             cadastro_vendas()
-        if crud == "Atualizar":
+        if crud_menu == "Atualizar":
             update_vendas()
-        if crud == "Deletar":
+        if crud_menu == "Deletar":
             deleta_vendas()
-    
-    visualiza_vendas()    
+
+    with crud:
+        graficos_menu = st.selectbox('Relatorio', ["historico","previsão"])
+        if graficos_menu == "historico":
+            chart_data = pd.DataFrame(
+            np.random.randn(20, 3),
+            columns=["a", "b", "c"])
+
+            st.bar_chart(chart_data)
+        if graficos_menu == "previsão":
+            forecast_registros()
+
+            
+
+    with st.expander("Historico de Vendas",expanded=True):
+        visualiza_vendas()    
 
     
     
